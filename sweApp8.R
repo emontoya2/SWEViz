@@ -1,10 +1,5 @@
 ################## 
-#library(lwgeom)
 library(fda)
-#library(lubridate)
-#library(lattice)
-#library(tidyr)
-#library(fields)
 library(tidyverse)
 library(sf)
 library(tmap)
@@ -12,10 +7,10 @@ library(tmaptools)
 library(leaflet)
 library(randomForest)
 
-load("rf_model.RData")
+load("rf_model.RData") # model results
 
 
-# data up to and including 2018-> 2019> is not clean
+# data up to and including 2018-> 2019 is not clean
 swedata2 <- read.csv("shinySWEdata.csv")
 
 swedata2 <- swedata2 %>%  # pick the site of interest
@@ -72,6 +67,7 @@ ui <- fluidPage(
   
   sidebarLayout(
     sidebarPanel(
+      # Add the action buttons and output text 
       selectInput("region", "Select Region (1969-2018):", 
                   choices = c("Northern Sierra", "Central Sierra", "Southern Sierra"),
                   selected = NULL, multiple = FALSE),
@@ -82,7 +78,6 @@ ui <- fluidPage(
                   choices = unique(swedata2$year),
                   selected = NULL, multiple = FALSE),
       actionButton("go", "Generate Plot and Map"),
-      # Add the action button and output text here
       actionButton("predict", "Predict Max SWE"),
       textOutput("predictedSWE") #, width = 5
     ),
@@ -91,7 +86,7 @@ ui <- fluidPage(
       tabsetPanel(
         tabPanel("Overview",
                  fluidRow(
-                   column(12,
+                   column(12, # overview of app
                           div(style = "background-color: darkblue; color: white; padding: 15px; border-radius: 5px;",
                               h3("App Overview", style = "font-size: 32px;"),
                               p("When one selects a region, site, and year, the app provides a regional summary 
@@ -108,8 +103,8 @@ ui <- fluidPage(
         ),
         tabPanel("Plot", plotOutput("swePlot")),
         tabPanel("Map", leafletOutput("siteMap")),
-        tabPanel("Histogram", plotOutput("sweHistogram")),  # New tabPanel for the histogram
-        tabPanel("Variable Importance", plotOutput("varImportance"))  # New tabPanel for variable importance
+        tabPanel("Histogram", plotOutput("sweHistogram")),  # tabPanel for the histogram
+        tabPanel("Variable Importance", plotOutput("varImportance"))  # tabPanel for variable importance
       )#,   width = 3
     )
   )
@@ -126,7 +121,7 @@ server <- function(input, output) {
     
     # Plot
     output$swePlot <- renderPlot({
-      # ... [Your code to generate the ggplot object based on data_filtered]
+      # Generate the ggplot object based on data_filtered]
       quantiles_by_dowy <- data_filtered %>%
         group_by(dowy) %>%
         summarize(q05 = quantile(swe, probs = 0.05),
@@ -196,7 +191,7 @@ server <- function(input, output) {
       pilllocinfo <- data_region %>% dplyr::select(site, Longitude, Latitude, Elevation, region)
       pillloc <- distinct(pilllocinfo)
       
-      # Group by site and year, then get the max SWE for each site-year combination
+      # Group by site and year, then get the max SWE for each site-year combo
       max_swe_data <- data_region %>%
         group_by(site, year) %>%
         summarize(max_swe = max(swe, na.rm = TRUE))
