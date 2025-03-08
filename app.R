@@ -10,11 +10,11 @@ library(randomForest)
 load("data/rf_model.RData") # model results
 
 
-# Data up to and including 2018-> 2019 is not clean
+# Data up to and including 2018-> beyond 2019 is not clean
 swedata2 <- read.csv("data/shinySWEdata.csv")
 
 swedata2 <- swedata2 %>%  # Pick the site of interest
-  arrange(site, year, dowy)
+  arrange(site, year, dowy) %>% filter( year < 2019)
 
 swedata2$region <- case_when(
   swedata2$Latitude >= 39 ~ "Northern Sierra",
