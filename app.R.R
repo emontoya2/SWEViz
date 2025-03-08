@@ -7,11 +7,11 @@ library(tmaptools)
 library(leaflet)
 library(randomForest)
 
-load("rf_model.RData") # model results
+load("data/rf_model.RData") # model results
 
 
 # Data up to and including 2018-> 2019 is not clean
-swedata2 <- read.csv("shinySWEdata.csv")
+swedata2 <- read.csv("data/shinySWEdata.csv")
 
 swedata2 <- swedata2 %>%  # Pick the site of interest
   arrange(site, year, dowy)
@@ -22,7 +22,7 @@ swedata2$region <- case_when(
   swedata2$Latitude < 37 ~ "Southern Sierra"
 )
 
-data_filtered <- swedata2# %>% filter(  year <2019) 
+data_filtered <- swedata2 
 
 pilllocinfo <- data_filtered %>% dplyr::select(site, Longitude, Latitude, Elevation, region)
 pillloc <- distinct(pilllocinfo)
@@ -36,8 +36,7 @@ max_swe_data <- data_filtered %>%
 
 max_swe_data2 <- max_swe_data %>% left_join(pillloc, by = "site")
 
-#print(str(max_swe_data2))
-
+ 
 library(shiny)
 
 addResourcePath("res", "www")
