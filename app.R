@@ -74,7 +74,7 @@ ui <- fluidPage(
                   choices = unique(swedata2$site),
                   selected = NULL, multiple = FALSE),
       selectInput("year", "Select Year (1969-2018):", 
-                  choices = unique(swedata2$year),
+                  choices = sort(unique(swedata2$year)),
                   selected = NULL, multiple = FALSE),
       actionButton("go", "Generate Plot and Map"),
       actionButton("predict", "Predict Max SWE"),
